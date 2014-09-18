@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Popup - Example 2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="popup" id="first">
+    <div class="content">
+        <a class="close-btn">x</a>
+
+        <div class="header">Hey, You get <strong>new</strong> message from <a href="">John Smith</a>!</div>
+        <p>
+            Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet
+            fermentum.Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit
+            amet fermentum.
+        </p>
+    </div>
+</div>
+<div class="popup" id="second">
+    <div class="content">
+        <a class="close-btn">x</a>
+
+        <div class="header">This is another popup from <a href="">John Smith</a>!</div>
+        <p>
+            Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet
+            fermentum.Morbi leo
+            risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.
+            Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet
+            fermentum.Morbi leo
+            risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.
+            Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet
+            fermentum.Morbi leo
+            risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.
+        </p>
+    </div>
+</div>
+<div class="btn" popup="first">Show Popup</div>
+<div class="btn" popup="second">Show Second Popup</div>
+<br/>
+Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.Morbi leo
+risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.
+Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.Morbi leo
+risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.
+Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.Morbi leo
+risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.
+</body>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+    $(".close-btn").click(function () {
+        $(this).parent().parent().fadeOut();
+    })
+
+    $(".popup").click(function () {
+        $(this).fadeOut();
+    })
+
+    $(document).keyup(function (e) {
+        if (e.keyCode == 27) {
+            $(".popup").fadeOut();
+        }
+    });
+
+    $(".btn").click(function () {
+        var popup = $(this).attr("popup");
+        var id = "";
+        if (popup != undefined) id = "#" + popup;
+        $(id + ".popup").fadeIn();
+    })
+</script>
+</html>

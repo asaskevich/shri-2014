@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Equalizr</title>
+    <!--  Вместо встроенного jQuery -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <style>
+        .equalizer-wrapper {
+            float: left;
+            margin: 0 20px 20px 0;
+        }
+        .equalizer {
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        .equalizer.small {
+            width: 100px;
+            height: 100px;
+        }
+        .equalizer.normal {
+            width: 200px;
+            height: 200px;
+        }
+        .equalizer.big {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    <script>
+        function setEqualizer(selector, timeout, colWidth) {
+            if (!colWidth) {
+                colWidth = 1;
+            }
+            $(selector).css({
+                verticalAlign: 'bottom',
+                lineHeight: $(selector).height() + 'px'
+            });
+
+            // Кол-во столбиков
+            var colQuantity = Math.ceil($(selector).width() / colWidth);
+            var cols = new Array(colQuantity);
+            var height = $(selector).height();
+            for (var i = 0; i < cols.length; i++) {
+                var span = $('<span/>').appendTo(selector);
+                span.css({
+                    verticalAlign: 'bottom',
+                    display: 'inline-block',
+
+                    fontSize: 0,
+                    lineHeight: 0,
+
+                    width: colWidth,
+                    background: 'pink',
+                    borderTop: '2px solid red'
+                });
+                init_equalizer(span, height);
+                run_equalizer_random(span, timeout, height);
+            }
+        }
+
+        // Установка высоты столбика в середину высоты блока
+        function init_equalizer(column, height) {
+            column.height(height / 2);
+        }
+
+        // Анимация установки случайной высоты для столбика
+        function run_equalizer_random(column, timeout, height) {
+            var colHeight = Math.round(height * Math.random());
+            column.animate({
+                height: colHeight
+            }, timeout, 'linear', function() {
+                run_equalizer_middle(column, timeout, height);
+            })
+        }
+
+        // Анимация восстановления столбика
+        function run_equalizer_middle(column, timeout, height) {
+            var h = height;
+            column.animate({
+                height: h / 2
+            }, timeout, 'linear', function() {
+                run_equalizer_random(column, timeout, h)
+            })
+        }
+
+        window.onload = function() {
+            setEqualizer('#eq_1 .equalizer', 1000, 2);
+            setEqualizer('#eq_2 .equalizer', 1000, 2);
+            setEqualizer('#eq_3 .equalizer', 1000, 2);
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Equalizers</h1>
+    <div id="eq_1" class="equalizer-wrapper">
+        <h2>First</h2>
+        <div class="equalizer small"></div>
+    </div>
+    <div id="eq_2" class="equalizer-wrapper">
+        <h2>Second</h2>
+        <div class="equalizer normal"></div>
+    </div>
+    <div id="eq_3" class="equalizer-wrapper">
+        <h2>Third</h2>
+        <div class="equalizer big"></div>
+    </div>
+</body>
+
+</html>
