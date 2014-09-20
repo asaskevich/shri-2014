@@ -1,3 +1,5 @@
+var MIN_DIST = 200; // Минимальное расстояние до мыши, до которого шарик может приблизиться
+var COUNT = 500; // Число шариков
 var w = window,
     d = document,
     e = d.documentElement,
@@ -7,7 +9,7 @@ var w = window,
 
 var bodySelection = d3.select("body");
 // Координаты мыши
-var coordinates = [0, 0];
+var coordinates = [- MIN_DIST * 2,  - MIN_DIST * 2];
 var svgSelection = bodySelection.append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -17,18 +19,18 @@ var svgSelection = bodySelection.append("svg")
 
 // Массив "шариков"
 var circles = [];
-for (var i = 0; i < 1000; i++)
+for (var i = 0; i < COUNT; i++)
     circles[i] = svgSelection.append("circle")
         .attr("cx", Math.random() * width)                          // Координата Х
         .attr("cy", Math.random() * height)                         // Координата У
-        .attr("r", 4)                                               // Радиус точки
+        .attr("r", Math.random() * 5 + 5)                           // Радиус точки
         .attr("speed", Math.abs(Math.random() * 20 - Math.random() * 20) + 10)     // Модуль скорости движения точки
         .attr("color", Math.random() * 255)                         // Цвет (канал Green)
         .attr("step", Math.random() * 20 - Math.random() * 20)      // Скорость и направление изменения цвета
         .style("fill", "red");                                      // Цвет по умолчанию - красный
 
-// Обновляет состояние поля
-setInterval(function () {
+// Обновляет состояние поля по таймеру
+d3.timer(function () {
     // Генерирует новый цвет для шарика
     function getColor(circle) {
         var color = parseInt(circle.attr("color"));
@@ -57,16 +59,30 @@ setInterval(function () {
         var x = parseInt(circles[i].attr("cx")) + (speed * Math.random() - speed * Math.random());
         var y = parseInt(circles[i].attr("cy")) + (speed * Math.random() - speed * Math.random());
         // Если шарик вышел за пределы экрана, вернуть его
-        if (x >= width || x <= 0) x = Math.random() * width;
-        if (y >= height || y <= 0) y = Math.random() * height;
+        if (x >= width || x <= 0 || y >= height || y <= 0) {
+            x = Math.random() * width;
+            y = Math.random() * height;
+
+            var dx = Math.abs(x - mouse_x);
+            var dy = Math.abs(y - mouse_y);
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            while (dist < MIN_DIST) {
+                x = Math.random() * width;
+                y = Math.random() * height;
+
+                dx = Math.abs(x - mouse_x);
+                dy = Math.abs(y - mouse_y);
+                dist = Math.sqrt(dx * dx + dy * dy);
+            }
+        }
         circles[i].attr("cx", x);
         circles[i].attr("cy", y);
         // Вычисление расстояния от шарика до курсора
         var dx = Math.abs(x - mouse_x);
         var dy = Math.abs(y - mouse_y);
         var dist = Math.sqrt(dx * dx + dy * dy);
-        // Если расстояние меньше ста пикселей, то двигать шарик от мыши
-        if (dist < 100) {
+        // Если расстояние меньше двухста пикселей, то двигать шарик от мыши
+        if (dist < MIN_DIST) {
             var angle = 0;
             var best_x = x;
             var best_y = y;
@@ -88,4 +104,4 @@ setInterval(function () {
             circles[i].attr("cy", best_y);
         }
     }
-}, 1);
+});
