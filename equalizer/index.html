@@ -31,74 +31,93 @@
             width: 300px;
             height: 300px;
         }
+
+        .custom_equalizer {
+            overflow: hidden;
+            border: 1px solid #ddd;
+            width: 300px;
+            height: 150px;
+        }
     </style>
     <script>
-        $.fn.equalizer = function (timeout, width) {
-            var that = this;
 
-            function setEqualizer(selector, timeout, colWidth) {
-                if (!colWidth) {
-                    colWidth = 1;
-                }
-                $(selector).css({
-                    verticalAlign: 'bottom',
-                    lineHeight: $(selector).height() + 'px'
-                });
+        (function ($) {
+            jQuery.fn.equalizer = function (options) {
+                // Опции эквалайзера
+                options = $.extend({
+                    timeout: 1000,
+                    width: 2
+                }, options);
+                // Применяет эквалайзер к отдельному элементу
+                var applyEqualizer = function () {
+                    var that = $(this);
 
-                // Кол-во столбиков
-                var colQuantity = Math.ceil($(selector).width() / colWidth);
-                var cols = new Array(colQuantity);
-                var height = $(selector).height();
-                for (var i = 0; i < cols.length; i++) {
-                    var span = $('<span/>').appendTo(selector);
-                    span.css({
-                        verticalAlign: 'bottom',
-                        display: 'inline-block',
+                    function setEqualizer(selector, timeout, colWidth) {
+                        if (!colWidth) {
+                            colWidth = 1;
+                        }
+                        $(selector).css({
+                            verticalAlign: 'bottom',
+                            lineHeight: $(selector).height() + 'px'
+                        });
 
-                        fontSize: 0,
-                        lineHeight: 0,
+                        // Кол-во столбиков
+                        var colQuantity = Math.ceil($(selector).width() / colWidth);
+                        var cols = new Array(colQuantity);
+                        var height = $(selector).height();
+                        for (var i = 0; i < cols.length; i++) {
+                            var span = $('<span/>').appendTo(selector);
+                            span.css({
+                                verticalAlign: 'bottom',
+                                display: 'inline-block',
 
-                        width: colWidth,
-                        background: 'pink',
-                        borderTop: '2px solid red'
-                    });
-                    init_equalizer(span, height);
-                    run_equalizer_random(span, timeout, height);
-                }
-            }
+                                fontSize: 0,
+                                lineHeight: 0,
 
-            // Установка высоты столбика в середину высоты блока
-            function init_equalizer(column, height) {
-                column.height(height / 2);
-            }
+                                width: colWidth,
+                                background: 'pink',
+                                borderTop: '2px solid red'
+                            });
+                            init_equalizer(span, height);
+                            run_equalizer_random(span, timeout, height);
+                        }
+                    }
 
-            // Анимация установки случайной высоты для столбика
-            function run_equalizer_random(column, timeout, height) {
-                var colHeight = Math.round(height * Math.random());
-                column.animate({
-                    height: colHeight
-                }, timeout, 'linear', function () {
-                    run_equalizer_middle(column, timeout, height);
-                })
-            }
+                    // Установка высоты столбика в середину высоты блока
+                    function init_equalizer(column, height) {
+                        column.height(height / 2);
+                    }
 
-            // Анимация восстановления столбика
-            function run_equalizer_middle(column, timeout, height) {
-                var h = height;
-                column.animate({
-                    height: h / 2
-                }, timeout, 'linear', function () {
-                    run_equalizer_random(column, timeout, h)
-                })
-            }
+                    // Анимация установки случайной высоты для столбика
+                    function run_equalizer_random(column, timeout, height) {
+                        var colHeight = Math.round(height * Math.random());
+                        column.animate({
+                            height: colHeight
+                        }, timeout, 'linear', function () {
+                            run_equalizer_middle(column, timeout, height);
+                        });
+                    }
 
-            setEqualizer(that, timeout, width);
-        };
+                    // Анимация восстановления столбика
+                    function run_equalizer_middle(column, timeout, height) {
+                        var h = height;
+                        column.animate({
+                            height: h / 2
+                        }, timeout, 'linear', function () {
+                            run_equalizer_random(column, timeout, h)
+                        });
+                    }
+
+                    setEqualizer(that, options.timeout, options.width);
+                };
+                // Применение эквалайзера к каждому выбранному объекту
+                return this.each(applyEqualizer);
+            };
+        })(jQuery);
 
         $(document).ready(function () {
-            $('#eq_1 .equalizer').equalizer(1000, 2);
-            $('#eq_2 .equalizer').equalizer(1000, 2);
-            $('#eq_3 .equalizer').equalizer(1000, 2);
+            $('.equalizer').equalizer();
+            $('.custom_equalizer').equalizer({width: 50, timeout: 500});
         });
     </script>
 </head>
@@ -120,6 +139,11 @@
     <h2>Third</h2>
 
     <div class="equalizer big"></div>
+</div>
+<div id="eq_custom" class="equalizer-wrapper">
+    <h4>Custom Equalizer {width: 50, timeout: 500}</h4>
+
+    <div class="custom_equalizer"></div>
 </div>
 </body>
 
