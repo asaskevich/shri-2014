@@ -45,7 +45,7 @@
             jQuery.fn.equalizer = function (options) {
                 // Опции эквалайзера
                 options = $.extend({
-                    timeout: 1000,
+                    timeout: 2000,
                     width: 2
                 }, options);
                 // Применяет эквалайзер к отдельному элементу
@@ -73,38 +73,23 @@
 
                                 fontSize: 0,
                                 lineHeight: 0,
-
+                                height: height / 2,
                                 width: colWidth,
                                 background: 'pink',
                                 borderTop: '2px solid red'
                             });
-                            init_equalizer(span, height);
-                            run_equalizer_random(span, timeout, height);
+                            animate_span(span, timeout, height);
                         }
                     }
 
-                    // Установка высоты столбика в середину высоты блока
-                    function init_equalizer(column, height) {
-                        column.height(height / 2);
-                    }
-
-                    // Анимация установки случайной высоты для столбика
-                    function run_equalizer_random(column, timeout, height) {
-                        var colHeight = Math.round(height * Math.random());
-                        column.animate({
-                            height: colHeight
-                        }, timeout, 'linear', function () {
-                            run_equalizer_middle(column, timeout, height);
-                        });
-                    }
-
-                    // Анимация восстановления столбика
-                    function run_equalizer_middle(column, timeout, height) {
-                        var h = height;
-                        column.animate({
-                            height: h / 2
-                        }, timeout, 'linear', function () {
-                            run_equalizer_random(column, timeout, h)
+                    // Выполняет последовательное анимирование столбика, послче чего добавляет в очередь функций
+                    // саму себя для повторного анимирования
+                    function animate_span(span, timeout, height) {
+                        span.animate({height: Math.round(height * Math.random())}, timeout);
+                        span.animate({height: height / 2}, timeout);
+                        span.queue(function (next) {
+                            animate_span(span, timeout, height);
+                            next();
                         });
                     }
 
