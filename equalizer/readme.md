@@ -18,3 +18,7 @@ $('.equalizer').equalizer({timeout: 500});
 // с отдельно указанными параметрами задержки и ширины столбика
 $('.equalizer').equalizer({timeout: 500, width: 50});
 ```
+
+Было выбрано два пути реализации - с использованием функции `$(this).animate()` и с использованием CSS3 `$(this).css()`:
+* [jQuery.animate()](index.html)
+* [jQuery.css()](index_css.html)

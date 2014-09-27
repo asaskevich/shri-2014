@@ -45,7 +45,7 @@
             jQuery.fn.equalizer = function (options) {
                 // Опции эквалайзера
                 options = $.extend({
-                    timeout: 2000,
+                    timeout: 1000,
                     width: 2
                 }, options);
                 // Применяет эквалайзер к отдельному элементу
@@ -76,21 +76,43 @@
                                 height: height / 2,
                                 width: colWidth,
                                 background: 'pink',
-                                borderTop: '2px solid red'
+                                borderTop: '2px solid red',
+                                transition: 'height ' + (timeout / 1000) + 's ease-in'
                             });
-                            animate_span(span, timeout, height);
+                            cols[i] = span;
                         }
+                        animate_span(cols, timeout, height);
                     }
 
                     // Выполняет последовательное анимирование столбика, послче чего добавляет в очередь функций
                     // саму себя для повторного анимирования
-                    function animate_span(span, timeout, height) {
-                        span.animate({height: Math.round(height * Math.random())}, timeout);
-                        span.animate({height: height / 2}, timeout);
-                        span.queue(function (next) {
-                            animate_span(span, timeout, height);
-                            next();
-                        });
+                    function animate_span(spans, timeout, height) {
+                        function animate_middle() {
+                            for (var i = 0; i < spans.length; i++) {
+                                spans[i].css({
+                                    height: height / 2
+                                });
+                            }
+                        }
+
+                        function animate_random() {
+                            for (var i = 0; i < spans.length; i++) {
+                                var colHeight = Math.round(height * Math.random());
+                                spans[i].css({
+                                    height: colHeight
+                                });
+                            }
+                        }
+
+                        function animate() {
+                            animate_random();
+                            setTimeout(animate_middle, timeout)
+                        }
+
+                        animate();
+                        setTimeout(function () {
+                            animate_span(spans, timeout, height)
+                        }, timeout * 2);
                     }
 
                     setEqualizer(that, options.timeout, options.width);
@@ -108,8 +130,8 @@
 </head>
 
 <body>
-<h1>Equalizers [jQuery.animate()]</h1>
-<a href="index_css.html">Look here example with CSS3</a>
+<h1>Equalizers [jQuery.css()]</h1>
+<a href="index.html">Look here example with jQuery's animate()</a>
 
 <div id="eq_1" class="equalizer-wrapper">
     <h2>First</h2>
