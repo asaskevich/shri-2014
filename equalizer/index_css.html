@@ -84,9 +84,10 @@
                         animate_span(cols, timeout, height);
                     }
 
-                    // Выполняет последовательное анимирование столбика, послче чего добавляет в очередь функций
-                    // саму себя для повторного анимирования
+                    // Выполняет изменение атрибута высоты, которое анимируется потому,
+                    // что для каждого столбика указан атрибут transition, отвечающий за анимацию
                     function animate_span(spans, timeout, height) {
+                        // Приведение набора столбиков к середине высоты
                         function animate_middle() {
                             for (var i = 0; i < spans.length; i++) {
                                 spans[i].css({
@@ -95,6 +96,7 @@
                             }
                         }
 
+                        // Приведение каждого столбика к случайной высоте
                         function animate_random() {
                             for (var i = 0; i < spans.length; i++) {
                                 var colHeight = Math.round(height * Math.random());
